@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lianchuang.dao.IGoods">
+    <select id="findGoodsBySuId" resultMap="GoodsResultMap" parameterType = "string">
+        SELECT a.id,a.name,a.price,(b.name)ki_id from goods a,goods_kind b where a.ki_id = b.id and b.su_id = #{su_id} ORDER BY b.list,a.id
+    </select>
+    <resultMap type="java.util.HashMap" id="GoodsResultMap">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="price" column="price"/>
+        <result property="ki_id" column="ki_id"/>
+    </resultMap>
+    <select id="findgoodsallBySuId" resultMap="Goods1ResultMap" parameterType = "int">
+        SELECT a.id,a.name,a.price,(b.name)ki_name,ki_id from goods a,goods_kind b where a.ki_id = b.id and b.su_id = #{su_id} ORDER BY b.list,a.id
+    </select>
+    <resultMap type="java.util.HashMap" id="Goods1ResultMap">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="price" column="price"/>
+        <result property="ki_id" column="ki_id"/>
+        <result property="ki_name" column="ki_name"/>
+    </resultMap>
+
+    <select id="findgoodsByKiId" resultType="com.lianchuang.model.Goods" parameterType = "string">
+        SELECT * from goods a where a.ki_id = #{ki_id}
+    </select>
+
+
+    <insert id="addGoods" parameterType = "com.lianchuang.model.Goods">
+        INSERT  into goods(ki_id,name,price)
+        VALUES
+        (#{ki_id},#{name},#{price})
+    </insert>
+    <update id="upGoodsById" parameterType = "com.lianchuang.model.Goods">
+        UPDATE goods SET ki_id=#{ki_id},name = #{name},price = #{price} WHERE id = #{id}
+    </update>
+    <delete id="delGoodsByid" parameterType = "java.lang.String">
+        DELETE from goods WHERE id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

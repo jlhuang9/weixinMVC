@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lianchuang.dao.IUserDao">
+    <select id="findUserByName" resultType="com.lianchuang.model.User" parameterType = "string">
+        select id, username , password,role from sysuser where username = #{username}
+    </select>
+
+    <select id="getUserByShop" resultType="com.lianchuang.model.User" parameterType = "string">
+        SELECT * from sysuser a WHERE a.shop = #{shop}
+    </select>
+
+    <select id="getSupplierList" resultType="com.lianchuang.model.User" parameterType="com.lianchuang.model.User">
+        select * from sysuser
+        <where>
+            role = 1
+            <if test="username!=null"> and username like #{username}</if>
+        </where>
+    </select>
+    <select id="find_count" parameterType="map" resultType="int">
+        select count(*) from sysuser
+        <if test="name!=null">where (username like #{username})</if>
+    </select>
+
+
+
+    <insert id="addUser" parameterType = "com.lianchuang.model.User">
+        INSERT  into sysuser(username,password,nick,role)
+        VALUES
+        (#{username},#{password},#{nick},#{role})
+    </insert>
+    <update id="upUserById" parameterType = "com.lianchuang.model.User">
+        UPDATE sysuser SET username=#{username},password = #{password},nick = #{nick} WHERE id = #{id}
+    </update>
+    <delete id="delUserByid" parameterType = "java.lang.String">
+        DELETE from sysuser WHERE id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lianchuang.dao.IUserInfo">
+    <select id="findUserByName" resultType="com.lianchuang.model.User" parameterType = "string">
+        select username , password from sysuser where username = #{username}
+    </select>
+    <select id="getFansList" resultType="com.lianchuang.model.UserInfo" parameterType="com.lianchuang.model.UserInfo">
+        select * from userinfo
+        <where>
+            1 = 1
+            <if test="nickname!=null"> and nickname like #{nickname}</if>
+        </where>
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" parameterType="com.lianchuang.model.UserInfo">
+       REPLACE INTO  userinfo (subscribe,openid,nickname,sex,city,country,province,language,headimgurl,subscribe_time,unionid,remark,groupid,tagid_list)
+       values
+       (#{subscribe},#{openid},#{nickname},#{sex},#{city},#{country},#{province},#{language},#{headimgurl},FROM_UNIXTIME(#{subscribe_time}),#{unionid},#{remark},#{groupid},#{tagid_list})
+
+    </insert>
+    <!--ON DUPLICATE KEY UPDATE-->
+    <!--subscribe = #{subscribe},nickname = #{nickname},sex = #{sex},city = #{city},country = #{country},province = #{province},language = #{language}-->
+
+
+    <insert id="listinsert" useGeneratedKeys="true" parameterType="java.util.List">
+        <selectKey resultType="long" keyProperty="openid" order="AFTER">
+            SELECT
+            LAST_INSERT_ID()
+        </selectKey>
+        insert into userinfo (subscribe,openid,nickname,sex,city,country,province,language,headimgurl,subscribe_time,unionid,remark,groupid,tagid_list)
+        values
+        <foreach collection="list" item="item" index="index" separator="," >
+            (#{item.subscribe},#{item.openid},#{item.nickname},#{item.sex},#{item.city},#{item.country},#{item.province},#{item.language},#{item.headimgurl},#{item.subscribe_time},#{item.unionid},#{item.remark},#{item.groupid},#{item.tagid_list})
+        </foreach>
+    </insert>
+
+</mapper>
